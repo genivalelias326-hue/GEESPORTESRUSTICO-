@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -436,12 +437,15 @@ function searchProducts() {
 renderProducts();
 
 </script>
+
+<!-- REGISTRO DO SERVICE WORKER -->
+
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("./service-worker.js")
-      .then(function () {
-      "/GEESPORTESRUSTICO-/service-worker.js"
+      .then(function (registration) {
+        console.log("Service Worker registrado:", registration.scope);
       })
       .catch(function (erro) {
         console.log("Erro ao registrar Service Worker:", erro);
@@ -449,5 +453,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+
 </body>
 </html>
