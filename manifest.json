@@ -2,15 +2,17 @@
   "name": "GEESPORTESRUSTICO",
   "short_name": "GEESPORTES",
   "description": "Ofertas e produtos selecionados para você",
-  "start_url": "./",
+  "start_url": "/GEESPORTESRUSTICO-/",
+  "scope": "/GEESPORTESRUSTICO-/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#155eef",
   "icons": [
     {
-      "src": "arquivo_000000004688820ead8b37a95f1e3237.png",
+      "src": "/GEESPORTESRUSTICO-/arquivo_000000004688820ead8b37a95f1e3237.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
