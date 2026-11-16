@@ -142,4 +142,300 @@ header p {
 }
 
 .admin h2 {
-  margin-top: 0
+  margin-top: 0;
+}
+
+.add-button {
+  background: #155eef;
+  margin-top: 10px;
+}
+
+.preview-box {
+  display: none;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.preview-box img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 12px;
+}
+
+.empty {
+  text-align: center;
+  padding: 30px;
+  color: #777;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  font-size: 13px;
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛒 GEESPORTESRUSTICO</h1>
+  <p>Ofertas e produtos selecionados para você</p>
+</header>
+
+<div class="container">
+
+<div class="search-box">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="🔎 Pesquisar produtos..."
+    oninput="searchProducts()"
+  >
+</div>
+
+<h2>📂 Categorias</h2>
+
+<div class="categories">
+  <button class="category" onclick="filterCategory('Cozinha')">🍳 Cozinha</button>
+  <button class="category" onclick="filterCategory('Banheiro')">🚿 Artigos Banheiro</button>
+  <button class="category" onclick="filterCategory('Brinquedos')">🧸 Brinquedos</button>
+  <button class="category" onclick="filterCategory('Carro')">🚗 Acessórios de Carro</button>
+  <button class="category" onclick="filterCategory('Roupa de Time')">⚽ Roupa de Time</button>
+  <button class="category" onclick="filterCategory('Celular')">📱 Celular</button>
+  <button class="category" onclick="filterCategory('Fones')">🎧 Fones de Ouvido</button>
+  <button class="category" onclick="filterCategory('Pet')">🐶 Pet</button>
+  <button class="category" onclick="filterCategory('Moda')">👕 Moda</button>
+  <button class="category" onclick="filterCategory('Tênis')">👟 Tênis</button>
+</div>
+
+<h2 id="productsTitle">🔥 Produtos e Ofertas</h2>
+
+<div class="products" id="products"></div>
+
+<div class="admin">
+
+<h2>➕ Cadastrar Produto</h2>
+
+<input type="text" id="productName" placeholder="Nome do produto">
+
+<input type="text" id="productPrice" placeholder="Preço (Ex: R$ 99,90)">
+
+<label><strong>📸 Escolher foto do produto:</strong></label>
+
+<input
+  type="file"
+  id="productImage"
+  accept="image/*"
+  onchange="previewImage()"
+>
+
+<div class="preview-box" id="previewBox">
+  <p>👀 Prévia da foto:</p>
+  <img id="preview">
+</div>
+
+<select id="productCategory">
+  <option value="">Escolha a categoria</option>
+  <option>Cozinha</option>
+  <option>Banheiro</option>
+  <option>Brinquedos</option>
+  <option>Carro</option>
+  <option>Roupa de Time</option>
+  <option>Celular</option>
+  <option>Fones</option>
+  <option>Pet</option>
+  <option>Moda</option>
+  <option>Tênis</option>
+</select>
+
+<select id="productPlatform">
+  <option value="">Escolha a plataforma</option>
+  <option>Shopee</option>
+  <option>Mercado Livre</option>
+</select>
+
+<input
+  type="url"
+  id="productLink"
+  placeholder="🔗 Cole aqui seu link de afiliado"
+>
+
+<button class="add-button" onclick="addProduct()">
+🚀 PUBLICAR PRODUTO
+</button>
+
+</div>
+
+</div>
+
+<footer>
+© 2026 GEESPORTESRUSTICO • Ofertas selecionadas
+</footer>
+
+<script>
+
+let products = JSON.parse(localStorage.getItem("geProdutos")) || [];
+let selectedImage = "";
+
+function saveProducts() {
+  localStorage.setItem("geProdutos", JSON.stringify(products));
+}
+
+function previewImage() {
+
+  const file = document.getElementById("productImage").files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+
+    selectedImage = event.target.result;
+
+    document.getElementById("preview").src = selectedImage;
+
+    document.getElementById("previewBox").style.display = "block";
+
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function renderProducts(list = products) {
+
+  const container = document.getElementById("products");
+
+  container.innerHTML = "";
+
+  if (list.length === 0) {
+
+    container.innerHTML = `
+      <div class="empty">
+        Nenhum produto encontrado.<br>
+        Cadastre seu primeiro produto! 🛒
+      </div>
+    `;
+
+    return;
+  }
+
+  list.forEach(product => {
+
+    container.innerHTML += `
+
+      <div class="product">
+
+        <img src="${product.image}" alt="${product.name}">
+
+        <div class="product-info">
+
+          <h3>${product.name}</h3>
+
+          <div class="price">${product.price}</div>
+
+          <div class="platform">
+            🛍️ ${product.platform}
+          </div>
+
+          <a
+            class="buy-button"
+            href="${product.link}"
+            target="_blank"
+          >
+            🛒 COMPRAR AGORA
+          </a>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+}
+
+function addProduct() {
+
+  const name = document.getElementById("productName").value.trim();
+  const price = document.getElementById("productPrice").value.trim();
+  const category = document.getElementById("productCategory").value;
+  const platform = document.getElementById("productPlatform").value;
+  const link = document.getElementById("productLink").value.trim();
+
+  if (!name || !price || !selectedImage || !category || !platform || !link) {
+
+    alert("⚠️ Preencha todos os campos e escolha uma foto!");
+
+    return;
+
+  }
+
+  products.push({
+    name: name,
+    price: price,
+    image: selectedImage,
+    category: category,
+    platform: platform,
+    link: link
+  });
+
+  saveProducts();
+
+  renderProducts();
+
+  document.getElementById("productName").value = "";
+  document.getElementById("productPrice").value = "";
+  document.getElementById("productImage").value = "";
+  document.getElementById("productCategory").value = "";
+  document.getElementById("productPlatform").value = "";
+  document.getElementById("productLink").value = "";
+
+  document.getElementById("previewBox").style.display = "none";
+
+  selectedImage = "";
+
+  alert("✅ Produto publicado com sucesso!");
+
+}
+
+function filterCategory(category) {
+
+  const filtered = products.filter(
+    product => product.category === category
+  );
+
+  document.getElementById("productsTitle").innerText =
+    "📂 " + category;
+
+  renderProducts(filtered);
+
+}
+
+function searchProducts() {
+
+  const search = document
+    .getElementById("searchInput")
+    .value
+    .toLowerCase();
+
+  const filtered = products.filter(product =>
+    product.name.toLowerCase().includes(search)
+  );
+
+  document.getElementById("productsTitle").innerText =
+    search ? "🔎 Resultado da pesquisa" : "🔥 Produtos e Ofertas";
+
+  renderProducts(filtered);
+
+}
+
+renderProducts();
+
+</script>
+
+</body>
+</html>
