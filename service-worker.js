@@ -1,13 +1,15 @@
-const CACHE_NAME = "geesportesrustico-v1";
+const CACHE_NAME = "geesportesrustico-v2";
+
+const urlsToCache = [
+  "/GEESPORTESRUSTICO-/",
+  "/GEESPORTESRUSTICO-/index.html",
+  "/GEESPORTESRUSTICO-/manifest.json"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([
-        "./",
-        "./index.html",
-        "./manifest.json"
-      ]);
+      return cache.addAll(urlsToCache);
     })
   );
 
