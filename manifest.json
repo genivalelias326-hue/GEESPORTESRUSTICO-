@@ -10,12 +10,12 @@
   "theme_color": "#155eef",
   "icons": [
     {
-      "src": "./ícone-de-esportes-192.png",
+      "src": "./ícone-de-esportes-192.png
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./ícone-de-esportes-512.png",
+      "src": "./ícone-de-esportes-512.png
       "sizes": "512x512",
       "type": "image/png"
     }
