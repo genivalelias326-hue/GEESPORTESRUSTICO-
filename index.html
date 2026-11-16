@@ -468,9 +468,16 @@ alt="Foto ampliada do produto">
 © 2026 GEESPORTESRUSTICO • Ofertas selecionadas
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://eefhhutbowjwnxfsecjd.supabase.co";
 
-let products=JSON.parse(localStorage.getItem("geProdutos"))||[];
+const SUPABASE_KEY = "sb_publishable_SdRT7jPMqT_ZgQvVNcyazg_vKFjKY_a";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);let products=JSON.parse(localStorage.getItem("geProdutos"))||[];
 
 let selectedImages=[];
 let editingId=null;
