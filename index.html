@@ -10,35 +10,207 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f7fc;color:#1f2937}
-header{background:#155eef;color:white;padding:22px 16px;text-align:center}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fc;
+  color:#1f2937;
+}
+
+header{
+  background:#155eef;
+  color:white;
+  padding:22px 16px;
+  text-align:center;
+}
+
 header h1{margin:0;font-size:22px}
 header p{margin:6px 0 0;font-size:13px}
-.container{max-width:1000px;margin:auto;padding:16px}
+
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:16px;
+}
+
 .search-box{margin-bottom:20px}
-.search-box input,.admin input,.admin select{width:100%;padding:14px;margin:7px 0;border-radius:10px;border:1px solid #ddd;font-size:15px}
-.categories{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.category{background:white;border:none;padding:16px 8px;border-radius:12px;font-weight:bold;box-shadow:0 3px 10px #0001;cursor:pointer}
-.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-top:15px}
-.product{background:white;border-radius:15px;overflow:hidden;box-shadow:0 3px 12px #0002}
-.product img{width:100%;height:180px;object-fit:cover;background:#ddd}
+
+.search-box input,
+.admin input,
+.admin select{
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:15px;
+}
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.category{
+  background:white;
+  border:none;
+  padding:16px 8px;
+  border-radius:12px;
+  font-weight:bold;
+  box-shadow:0 3px 10px rgba(0,0,0,.08);
+  cursor:pointer;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:16px;
+  margin-top:15px;
+}
+
+.product{
+  background:white;
+  border-radius:15px;
+  overflow:hidden;
+  box-shadow:0 3px 12px rgba(0,0,0,.10);
+}
+
+.product img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  background:#ddd;
+}
+
 .product-info{padding:12px}
-.product h3{margin:0 0 8px;font-size:15px}
-.price{color:#155eef;font-size:18px;font-weight:bold;margin-bottom:8px}
-.platform{color:#666;font-size:12px;margin-bottom:10px}
-.offer{display:inline-block;padding:8px 10px;border-radius:8px;font-size:12px;font-weight:bold;margin:5px 0 10px}
-.price-down{background:#fee2e2;color:#dc2626}
-.super-offer{background:#fef3c7;color:#b45309}
-.normal-offer{background:#e0f2fe;color:#0369a1}
-.buy-button,.add-button{display:block;width:100%;border:none;background:#16a34a;color:white;padding:13px;border-radius:10px;font-weight:bold;text-align:center;text-decoration:none;cursor:pointer}
-.admin{background:white;margin-top:35px;padding:20px;border-radius:16px;box-shadow:0 3px 12px #0001}
+
+.product h3{
+  margin:0 0 10px;
+  font-size:16px;
+}
+
+.offer{
+  background:#ffeded;
+  color:#dc2626;
+  padding:10px;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:bold;
+  text-align:center;
+  margin:10px 0;
+}
+
+.platform{
+  color:#666;
+  font-size:12px;
+  margin-bottom:12px;
+}
+
+.buy-button{
+  display:block;
+  width:100%;
+  border:none;
+  background:#16a34a;
+  color:white;
+  padding:15px 10px;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:bold;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.buy-button:active{background:#15803d}
+
+.admin{
+  background:white;
+  margin-top:35px;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
 .admin h2{margin-top:0}
-.add-button{background:#155eef;margin-top:10px}
-.preview-box{display:none;margin-top:10px;text-align:center}
-.preview-box img{max-width:100%;max-height:250px;border-radius:12px}
-.empty{text-align:center;padding:30px;color:#777}
-footer{text-align:center;padding:30px;font-size:13px;color:#777}
-.small{font-size:12px;color:#777}
+
+.add-button{
+  display:block;
+  width:100%;
+  border:none;
+  background:#155eef;
+  color:white;
+  padding:15px;
+  border-radius:10px;
+  font-weight:bold;
+  font-size:15px;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+.cancel-button{
+  display:none;
+  width:100%;
+  border:none;
+  background:#777;
+  color:white;
+  padding:13px;
+  border-radius:10px;
+  margin-top:8px;
+  cursor:pointer;
+}
+
+.manage-buttons{
+  display:flex;
+  gap:7px;
+  margin-top:10px;
+}
+
+.edit-button,.delete-button{
+  flex:1;
+  border:none;
+  padding:11px 5px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.edit-button{
+  background:#e0edff;
+  color:#155eef;
+}
+
+.delete-button{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+.preview-box{
+  display:none;
+  margin-top:10px;
+  text-align:center;
+}
+
+.preview-box img{
+  max-width:100%;
+  max-height:250px;
+  border-radius:12px;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#777;
+}
+
+footer{
+  text-align:center;
+  padding:30px;
+  font-size:13px;
+  color:#777;
+}
 </style>
 </head>
 
@@ -52,7 +224,11 @@ footer{text-align:center;padding:30px;font-size:13px;color:#777}
 <div class="container">
 
 <div class="search-box">
-<input type="text" id="searchInput" placeholder="🔎 Pesquisar produtos..." oninput="searchProducts()">
+<input
+type="text"
+id="searchInput"
+placeholder="🔎 Pesquisar produtos..."
+oninput="searchProducts()">
 </div>
 
 <h2>📂 Categorias</h2>
@@ -68,26 +244,29 @@ footer{text-align:center;padding:30px;font-size:13px;color:#777}
 <button class="category" onclick="filterCategory('Pet')">🐶 Pet</button>
 <button class="category" onclick="filterCategory('Moda')">👕 Moda</button>
 <button class="category" onclick="filterCategory('Tênis')">👟 Tênis</button>
+<button class="category" onclick="showAllProducts()">🏠 Todos</button>
 </div>
 
 <h2 id="productsTitle">🔥 Produtos e Ofertas</h2>
+
 <div class="products" id="products"></div>
 
-<div class="admin">
-<h2>➕ Cadastrar Produto</h2>
+<div class="admin" id="adminPanel">
 
-<input type="text" id="productName" placeholder="Nome do produto">
+<h2 id="formTitle">➕ Cadastrar Produto</h2>
 
-<label><strong>Preço atual (R$):</strong></label>
-<input type="number" id="productPrice" placeholder="Ex: 89.90" min="0" step="0.01">
-
-<label><strong>Preço anterior (R$):</strong></label>
-<input type="number" id="previousPrice" placeholder="Ex: 119.90 (opcional)" min="0" step="0.01">
-
-<p class="small">O sistema compara os dois valores para identificar uma queda real.</p>
+<input
+type="text"
+id="productName"
+placeholder="Nome do produto">
 
 <label><strong>📸 Escolher foto do produto:</strong></label>
-<input type="file" id="productImage" accept="image/*" onchange="previewImage()">
+
+<input
+type="file"
+id="productImage"
+accept="image/*"
+onchange="previewImage()">
 
 <div class="preview-box" id="previewBox">
 <p>👀 Prévia da foto:</p>
@@ -96,11 +275,16 @@ footer{text-align:center;padding:30px;font-size:13px;color:#777}
 
 <select id="productCategory">
 <option value="">Escolha a categoria</option>
-<option>Cozinha</option><option>Banheiro</option>
-<option>Brinquedos</option><option>Carro</option>
-<option>Roupa de Time</option><option>Celular</option>
-<option>Fones</option><option>Pet</option>
-<option>Moda</option><option>Tênis</option>
+<option>Cozinha</option>
+<option>Banheiro</option>
+<option>Brinquedos</option>
+<option>Carro</option>
+<option>Roupa de Time</option>
+<option>Celular</option>
+<option>Fones</option>
+<option>Pet</option>
+<option>Moda</option>
+<option>Tênis</option>
 </select>
 
 <select id="productPlatform">
@@ -109,9 +293,19 @@ footer{text-align:center;padding:30px;font-size:13px;color:#777}
 <option>Mercado Livre</option>
 </select>
 
-<input type="url" id="productLink" placeholder="🔗 Cole aqui seu link de afiliado">
+<input
+type="url"
+id="productLink"
+placeholder="🔗 Cole aqui seu link de afiliado">
 
-<button class="add-button" onclick="addProduct()">🚀 PUBLICAR PRODUTO</button>
+<button class="add-button" id="submitButton" onclick="addProduct()">
+🚀 PUBLICAR PRODUTO
+</button>
+
+<button class="cancel-button" id="cancelButton" onclick="cancelEdit()">
+CANCELAR EDIÇÃO
+</button>
+
 </div>
 </div>
 
@@ -120,178 +314,296 @@ footer{text-align:center;padding:30px;font-size:13px;color:#777}
 </footer>
 
 <script>
+
 let products = JSON.parse(localStorage.getItem("geProdutos")) || [];
 let selectedImage = "";
+let editingId = null;
+
+// Identifica os produtos antigos sem apagar seus dados
+products = products.map((product,index)=>({
+  ...product,
+  id:product.id || (Date.now()+index)
+}));
 
 function saveProducts(){
-localStorage.setItem("geProdutos",JSON.stringify(products));
+  localStorage.setItem("geProdutos",JSON.stringify(products));
 }
 
 function previewImage(){
-const file=document.getElementById("productImage").files[0];
-if(!file)return;
-const reader=new FileReader();
-reader.onload=function(event){
-selectedImage=event.target.result;
-document.getElementById("preview").src=selectedImage;
-document.getElementById("previewBox").style.display="block";
-};
-reader.readAsDataURL(file);
-}
 
-function getOffer(product){
-const current=Number(product.price);
-const previous=Number(product.previousPrice);
+  const file=document.getElementById("productImage").files[0];
 
-if(previous>0 && current>0 && current<previous){
-return '<div class="offer price-down">🔥 PREÇO BAIXOU!</div>';
-}
-if(product.promotion===true){
-return '<div class="offer super-offer">💥 OFERTA IMPERDÍVEL!</div>';
-}
-return '<div class="offer normal-offer">🛍️ CONFIRA A OFERTA</div>';
+  if(!file)return;
+
+  if(!file.type.startsWith("image/")){
+    alert("Escolha uma imagem válida.");
+    return;
+  }
+
+  const reader=new FileReader();
+
+  reader.onload=function(event){
+    selectedImage=event.target.result;
+    document.getElementById("preview").src=selectedImage;
+    document.getElementById("previewBox").style.display="block";
+  };
+
+  reader.readAsDataURL(file);
 }
 
 function renderProducts(list=products){
-const container=document.getElementById("products");
-container.innerHTML="";
 
-if(list.length===0){
-container.innerHTML='<div class="empty">Nenhum produto encontrado.<br>Cadastre seu primeiro produto! 🛒</div>';
-return;
-}
+  const container=document.getElementById("products");
+  container.innerHTML="";
 
-list.forEach(product=>{
-const price=Number(product.price);
-const previous=Number(product.previousPrice);
-const priceText=price>0?price.toLocaleString("pt-BR",{style:"currency",currency:"BRL"}):(product.price||"Consulte o preço");
+  if(list.length===0){
+    container.innerHTML=`
+      <div class="empty">
+        Nenhum produto encontrado.<br>
+        Cadastre seu primeiro produto! 🛒
+      </div>`;
+    return;
+  }
 
-const oldPrice=previous>price && price>0
-? '<div class="small"><s>'+previous.toLocaleString("pt-BR",{style:"currency",currency:"BRL"})+'</s></div>'
-: "";
+  list.forEach(product=>{
 
-const card=document.createElement("div");
-card.className="product";
+    const card=document.createElement("div");
+    card.className="product";
 
-const img=document.createElement("img");
-img.src=product.image;
-img.alt=product.name;
+    const img=document.createElement("img");
+    img.src=product.image;
+    img.alt=product.name;
+    img.loading="lazy";
 
-const info=document.createElement("div");
-info.className="product-info";
+    const info=document.createElement("div");
+    info.className="product-info";
 
-const name=document.createElement("h3");
-name.textContent=product.name;
+    const name=document.createElement("h3");
+    name.textContent=product.name;
 
-const offer=document.createElement("div");
-offer.innerHTML=getOffer(product);
+    const offer=document.createElement("div");
+    offer.className="offer";
+    offer.textContent="🔥 PREÇO BAIXOU!";
 
-const priceDiv=document.createElement("div");
-priceDiv.className="price";
-priceDiv.textContent=priceText;
+    const platform=document.createElement("div");
+    platform.className="platform";
+    platform.textContent="🛍️ "+product.platform;
 
-const old=document.createElement("div");
-old.innerHTML=oldPrice;
+    const link=document.createElement("a");
+    link.className="buy-button";
+    link.href=product.link;
+    link.target="_blank";
+    link.rel="noopener noreferrer";
+    link.textContent="🛒 COMPRE AGORA";
 
-const platform=document.createElement("div");
-platform.className="platform";
-platform.textContent="🛍️ "+product.platform;
+    const controls=document.createElement("div");
+    controls.className="manage-buttons";
 
-const link=document.createElement("a");
-link.className="buy-button";
-link.href=product.link;
-link.target="_blank";
-link.rel="noopener noreferrer";
-link.textContent="🛒 COMPRAR AGORA";
+    const edit=document.createElement("button");
+    edit.className="edit-button";
+    edit.textContent="✏️ EDITAR";
+    edit.onclick=()=>editProduct(product.id);
 
-info.append(name,offer,old,priceDiv,platform,link);
-card.append(img,info);
-container.appendChild(card);
-});
+    const remove=document.createElement("button");
+    remove.className="delete-button";
+    remove.textContent="🗑️ EXCLUIR";
+    remove.onclick=()=>deleteProduct(product.id);
+
+    controls.append(edit,remove);
+
+    info.append(name,offer,platform,link,controls);
+    card.append(img,info);
+    container.appendChild(card);
+
+  });
 }
 
 function addProduct(){
-const name=document.getElementById("productName").value.trim();
-const price=document.getElementById("productPrice").value;
-const previous=document.getElementById("previousPrice").value;
-const category=document.getElementById("productCategory").value;
-const platform=document.getElementById("productPlatform").value;
-const link=document.getElementById("productLink").value.trim();
 
-if(!name||!price||Number(price)<=0||!selectedImage||!category||!platform||!link){
-alert("⚠️ Preencha todos os campos obrigatórios e escolha uma foto!");
-return;
+  const name=document.getElementById("productName").value.trim();
+  const category=document.getElementById("productCategory").value;
+  const platform=document.getElementById("productPlatform").value;
+  const link=document.getElementById("productLink").value.trim();
+
+  if(!name || (!selectedImage && editingId===null) ||
+     !category || !platform || !link){
+
+    alert("⚠️ Preencha todos os campos e escolha uma foto!");
+    return;
+  }
+
+  try{
+    const url=new URL(link);
+
+    if(!["http:","https:"].includes(url.protocol)){
+      throw new Error();
+    }
+  }catch{
+    alert("⚠️ Insira um link válido.");
+    return;
+  }
+
+  if(editingId!==null){
+
+    const index=products.findIndex(p=>p.id===editingId);
+
+    if(index===-1){
+      alert("Produto não encontrado.");
+      cancelEdit();
+      return;
+    }
+
+    products[index]={
+      ...products[index],
+      name,
+      category,
+      platform,
+      link,
+      image:selectedImage || products[index].image
+    };
+
+    alert("✅ Anúncio atualizado com sucesso!");
+
+  }else{
+
+    products.push({
+      id:Date.now(),
+      name,
+      category,
+      platform,
+      link,
+      image:selectedImage
+    });
+
+    alert("✅ Produto publicado com sucesso!");
+  }
+
+  saveProducts();
+  renderProducts();
+  resetForm();
 }
 
-try{
-const url=new URL(link);
-if(!["https:","http:"].includes(url.protocol)){
-alert("Informe um link válido.");
-return;
-}
-}catch(e){
-alert("Informe um link válido.");
-return;
+function editProduct(id){
+
+  const product=products.find(p=>p.id===id);
+
+  if(!product)return;
+
+  editingId=id;
+
+  document.getElementById("productName").value=product.name;
+  document.getElementById("productCategory").value=product.category;
+  document.getElementById("productPlatform").value=product.platform;
+  document.getElementById("productLink").value=product.link;
+
+  selectedImage="";
+
+  document.getElementById("preview").src=product.image;
+  document.getElementById("previewBox").style.display="block";
+
+  document.getElementById("formTitle").innerText="✏️ Editar Anúncio";
+  document.getElementById("submitButton").innerText="💾 SALVAR ALTERAÇÕES";
+  document.getElementById("cancelButton").style.display="block";
+
+  document.getElementById("adminPanel").scrollIntoView({
+    behavior:"smooth"
+  });
 }
 
-const current=Number(price);
-const old=Number(previous);
+function deleteProduct(id){
 
-if(previous && (old<=0 || old<=current)){
-alert("O preço anterior deve ser maior que o preço atual para indicar uma queda.");
-return;
+  const product=products.find(p=>p.id===id);
+
+  if(!product)return;
+
+  const confirmDelete=confirm(
+    "Tem certeza que deseja excluir o anúncio: "+product.name+"?"
+  );
+
+  if(!confirmDelete)return;
+
+  products=products.filter(p=>p.id!==id);
+
+  saveProducts();
+  renderProducts();
+
+  if(editingId===id)resetForm();
+
+  alert("🗑️ Anúncio excluído!");
 }
 
-products.push({
-name,
-price:current,
-previousPrice:previous?old:0,
-image:selectedImage,
-category,
-platform,
-link,
-promotion:false
-});
+function resetForm(){
+
+  editingId=null;
+  selectedImage="";
+
+  document.getElementById("productName").value="";
+  document.getElementById("productImage").value="";
+  document.getElementById("productCategory").value="";
+  document.getElementById("productPlatform").value="";
+  document.getElementById("productLink").value="";
+
+  document.getElementById("previewBox").style.display="none";
+
+  document.getElementById("formTitle").innerText="➕ Cadastrar Produto";
+  document.getElementById("submitButton").innerText="🚀 PUBLICAR PRODUTO";
+  document.getElementById("cancelButton").style.display="none";
+}
+
+function cancelEdit(){
+  resetForm();
+}
+
+function filterCategory(category){
+
+  const filtered=products.filter(
+    product=>product.category===category
+  );
+
+  document.getElementById("productsTitle").innerText="📂 "+category;
+  renderProducts(filtered);
+}
+
+function showAllProducts(){
+
+  document.getElementById("searchInput").value="";
+  document.getElementById("productsTitle").innerText="🔥 Produtos e Ofertas";
+
+  renderProducts();
+}
+
+function searchProducts(){
+
+  const search=document
+    .getElementById("searchInput")
+    .value.toLowerCase();
+
+  const filtered=products.filter(product=>
+    product.name.toLowerCase().includes(search)
+  );
+
+  document.getElementById("productsTitle").innerText=
+    search?"🔎 Resultado da pesquisa":"🔥 Produtos e Ofertas";
+
+  renderProducts(filtered);
+}
 
 saveProducts();
 renderProducts();
 
-["productName","productPrice","previousPrice","productImage","productCategory","productPlatform","productLink"].forEach(id=>{
-document.getElementById(id).value="";
-});
-
-document.getElementById("previewBox").style.display="none";
-selectedImage="";
-alert("✅ Produto publicado com sucesso!");
-}
-
-function filterCategory(category){
-const filtered=products.filter(product=>product.category===category);
-document.getElementById("productsTitle").innerText="📂 "+category;
-renderProducts(filtered);
-}
-
-function searchProducts(){
-const search=document.getElementById("searchInput").value.toLowerCase();
-const filtered=products.filter(product=>product.name.toLowerCase().includes(search));
-document.getElementById("productsTitle").innerText=search?"🔎 Resultado da pesquisa":"🔥 Produtos e Ofertas";
-renderProducts(filtered);
-}
-
-renderProducts();
 </script>
 
 <script>
 if("serviceWorker" in navigator){
-window.addEventListener("load",function(){
-navigator.serviceWorker.register("./service-worker.js")
-.then(function(registration){
-console.log("Service Worker registrado:",registration.scope);
-})
-.catch(function(error){
-console.log("Erro ao registrar Service Worker:",error);
-});
-});
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("./service-worker.js")
+    .then(function(registration){
+      console.log("Service Worker registrado:",registration.scope);
+    })
+    .catch(function(error){
+      console.log("Erro ao registrar Service Worker:",error);
+    });
+  });
 }
 </script>
 
