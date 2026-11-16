@@ -1,26 +1,25 @@
-const CACHE_NAME = "geesportesrustico-v2";
+const CACHE_NAME = "geesportesrustico-v1";
 
-const urlsToCache = [
-  "/GEESPORTESRUSTICO-/",
-  "/GEESPORTESRUSTICO-/index.html",
-  "/GEESPORTESRUSTICO-/manifest.json"
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.json"
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", function (event) {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(ASSETS);
     })
   );
-
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", function (event) {
   event.waitUntil(
-    caches.keys().then((keys) => {
+    caches.keys().then(function (keys) {
       return Promise.all(
-        keys.map((key) => {
+        keys.map(function (key) {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
@@ -28,14 +27,13 @@ self.addEventListener("activate", (event) => {
       );
     })
   );
-
   self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
+self.addEventListener("fetch", function (event) {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    fetch(event.request).catch(function () {
+      return caches.match(event.request);
     })
   );
 });
