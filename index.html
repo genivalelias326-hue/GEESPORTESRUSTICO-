@@ -77,12 +77,111 @@ header p{margin:6px 0 0;font-size:13px}
   box-shadow:0 3px 12px rgba(0,0,0,.10);
 }
 
-.product img{
+/* GALERIA */
+
+.gallery{
+  position:relative;
   width:100%;
-  height:180px;
-  object-fit:cover;
-  background:#ddd;
+  height:210px;
+  background:#eee;
+  overflow:hidden;
+  touch-action:pan-y;
 }
+
+.gallery img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  cursor:zoom-in;
+}
+
+.gallery-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:32px;
+  height:38px;
+  border:none;
+  border-radius:20px;
+  background:rgba(0,0,0,.55);
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  z-index:2;
+}
+
+.gallery-prev{left:5px}
+.gallery-next{right:5px}
+
+.gallery-dots{
+  position:absolute;
+  bottom:8px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  z-index:2;
+}
+
+.gallery-dot{
+  width:8px;
+  height:8px;
+  padding:0;
+  border:none;
+  border-radius:50%;
+  background:rgba(255,255,255,.65);
+  cursor:pointer;
+}
+
+.gallery-dot.active{
+  background:#155eef;
+  transform:scale(1.3);
+}
+
+.gallery-counter{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:rgba(0,0,0,.6);
+  color:white;
+  font-size:11px;
+  padding:5px 8px;
+  border-radius:15px;
+}
+
+/* FOTO AMPLIADA */
+
+.image-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.94);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.image-modal img{
+  max-width:100%;
+  max-height:85vh;
+  object-fit:contain;
+}
+
+.modal-close{
+  position:absolute;
+  top:15px;
+  right:20px;
+  background:none;
+  border:none;
+  color:white;
+  font-size:36px;
+  cursor:pointer;
+}
+
+/* PRODUTOS */
 
 .product-info{padding:12px}
 
@@ -187,16 +286,49 @@ header p{margin:6px 0 0;font-size:13px}
   color:#dc2626;
 }
 
+/* PRÉVIA */
+
 .preview-box{
   display:none;
-  margin-top:10px;
-  text-align:center;
+  margin-top:12px;
 }
 
-.preview-box img{
-  max-width:100%;
-  max-height:250px;
-  border-radius:12px;
+.preview-list{
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  padding:8px 2px;
+}
+
+.preview-item{
+  position:relative;
+  flex:0 0 85px;
+}
+
+.preview-item img{
+  width:85px;
+  height:85px;
+  object-fit:cover;
+  border-radius:9px;
+  border:2px solid #ddd;
+}
+
+.remove-photo{
+  position:absolute;
+  top:-7px;
+  right:-5px;
+  border:none;
+  background:#dc2626;
+  color:white;
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  cursor:pointer;
+}
+
+.photo-count{
+  font-size:13px;
+  color:#666;
 }
 
 .empty{
@@ -211,6 +343,16 @@ footer{
   font-size:13px;
   color:#777;
 }
+
+@media(max-width:380px){
+  .products{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+  .gallery{height:175px}
+  .product h3{font-size:14px}
+  .buy-button{font-size:14px}
+}
 </style>
 </head>
 
@@ -224,9 +366,7 @@ footer{
 <div class="container">
 
 <div class="search-box">
-<input
-type="text"
-id="searchInput"
+<input type="text" id="searchInput"
 placeholder="🔎 Pesquisar produtos..."
 oninput="searchProducts()">
 </div>
@@ -255,22 +395,21 @@ oninput="searchProducts()">
 
 <h2 id="formTitle">➕ Cadastrar Produto</h2>
 
-<input
-type="text"
-id="productName"
+<input type="text" id="productName"
 placeholder="Nome do produto">
 
-<label><strong>📸 Escolher foto do produto:</strong></label>
+<label><strong>📸 Escolha as fotos do produto:</strong></label>
 
-<input
-type="file"
-id="productImage"
-accept="image/*"
-onchange="previewImage()">
+<input type="file" id="productImage"
+accept="image/*" multiple onchange="previewImage()">
+
+<p class="photo-count">
+Você pode selecionar várias fotos de uma vez.
+</p>
 
 <div class="preview-box" id="previewBox">
-<p>👀 Prévia da foto:</p>
-<img id="preview">
+<strong>👀 Fotos selecionadas:</strong>
+<div class="preview-list" id="previewList"></div>
 </div>
 
 <select id="productCategory">
@@ -293,20 +432,28 @@ onchange="previewImage()">
 <option>Mercado Livre</option>
 </select>
 
-<input
-type="url"
-id="productLink"
+<input type="url" id="productLink"
 placeholder="🔗 Cole aqui seu link de afiliado">
 
-<button class="add-button" id="submitButton" onclick="addProduct()">
+<button class="add-button" id="submitButton"
+onclick="addProduct()">
 🚀 PUBLICAR PRODUTO
 </button>
 
-<button class="cancel-button" id="cancelButton" onclick="cancelEdit()">
+<button class="cancel-button" id="cancelButton"
+onclick="cancelEdit()">
 CANCELAR EDIÇÃO
 </button>
 
 </div>
+</div>
+
+<div class="image-modal" id="imageModal"
+onclick="closeImageModal()">
+<button class="modal-close"
+onclick="closeImageModal()">×</button>
+<img id="modalImage" src=""
+alt="Foto ampliada do produto">
 </div>
 
 <footer>
@@ -315,40 +462,185 @@ CANCELAR EDIÇÃO
 
 <script>
 
-let products = JSON.parse(localStorage.getItem("geProdutos")) || [];
-let selectedImage = "";
-let editingId = null;
+let products=JSON.parse(localStorage.getItem("geProdutos"))||[];
+let selectedImages=[];
+let editingId=null;
 
-// Identifica os produtos antigos sem apagar seus dados
-products = products.map((product,index)=>({
+products=products.map((product,index)=>({
   ...product,
-  id:product.id || (Date.now()+index)
+  id:product.id||(Date.now()+index),
+  images:product.images&&product.images.length
+    ?product.images
+    :(product.image?[product.image]:[])
 }));
 
 function saveProducts(){
-  localStorage.setItem("geProdutos",JSON.stringify(products));
+  try{
+    localStorage.setItem("geProdutos",JSON.stringify(products));
+  }catch(error){
+    alert("Não foi possível salvar. Tente usar fotos menores.");
+    throw error;
+  }
 }
 
 function previewImage(){
 
-  const file=document.getElementById("productImage").files[0];
+  const input=document.getElementById("productImage");
+  const files=Array.from(input.files);
+  input.value="";
 
-  if(!file)return;
+  files.forEach(file=>{
 
-  if(!file.type.startsWith("image/")){
-    alert("Escolha uma imagem válida.");
+    if(!file.type.startsWith("image/")){
+      alert("Escolha somente imagens válidas.");
+      return;
+    }
+
+    const reader=new FileReader();
+
+    reader.onload=function(event){
+      selectedImages.push(event.target.result);
+      renderPreview();
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPreview(){
+
+  const box=document.getElementById("previewBox");
+  const list=document.getElementById("previewList");
+
+  list.innerHTML="";
+
+  if(selectedImages.length===0){
+    box.style.display="none";
     return;
   }
 
-  const reader=new FileReader();
+  box.style.display="block";
 
-  reader.onload=function(event){
-    selectedImage=event.target.result;
-    document.getElementById("preview").src=selectedImage;
-    document.getElementById("previewBox").style.display="block";
-  };
+  selectedImages.forEach((image,index)=>{
 
-  reader.readAsDataURL(file);
+    const item=document.createElement("div");
+    item.className="preview-item";
+
+    const img=document.createElement("img");
+    img.src=image;
+
+    const remove=document.createElement("button");
+    remove.className="remove-photo";
+    remove.textContent="×";
+    remove.onclick=()=>removeSelectedImage(index);
+
+    item.append(img,remove);
+    list.appendChild(item);
+  });
+
+  const count=document.createElement("p");
+  count.className="photo-count";
+  count.textContent=selectedImages.length+" foto(s) selecionada(s)";
+  list.appendChild(count);
+}
+
+function removeSelectedImage(index){
+  selectedImages.splice(index,1);
+  renderPreview();
+}
+
+function openImageModal(image){
+  document.getElementById("modalImage").src=image;
+  document.getElementById("imageModal").style.display="flex";
+}
+
+function closeImageModal(){
+  document.getElementById("imageModal").style.display="none";
+}
+
+document.addEventListener("keydown",function(event){
+  if(event.key==="Escape")closeImageModal();
+});
+
+function createGallery(product){
+
+  const images=product.images&&product.images.length
+    ?product.images
+    :(product.image?[product.image]:[]);
+
+  const gallery=document.createElement("div");
+  gallery.className="gallery";
+
+  if(!images.length)return gallery;
+
+  let currentIndex=0;
+
+  const img=document.createElement("img");
+  img.src=images[0];
+  img.alt=product.name;
+  img.loading="lazy";
+  img.onclick=()=>openImageModal(images[currentIndex]);
+
+  gallery.appendChild(img);
+
+  if(images.length<=1)return gallery;
+
+  const counter=document.createElement("div");
+  counter.className="gallery-counter";
+
+  const dots=document.createElement("div");
+  dots.className="gallery-dots";
+
+  function showSlide(index){
+
+    currentIndex=(index+images.length)%images.length;
+    img.src=images[currentIndex];
+    counter.textContent=(currentIndex+1)+" / "+images.length;
+
+    Array.from(dots.children).forEach((dot,i)=>{
+      dot.classList.toggle("active",i===currentIndex);
+    });
+  }
+
+  const prev=document.createElement("button");
+  prev.className="gallery-arrow gallery-prev";
+  prev.textContent="‹";
+  prev.setAttribute("aria-label","Foto anterior");
+  prev.onclick=()=>showSlide(currentIndex-1);
+
+  const next=document.createElement("button");
+  next.className="gallery-arrow gallery-next";
+  next.textContent="›";
+  next.setAttribute("aria-label","Próxima foto");
+  next.onclick=()=>showSlide(currentIndex+1);
+
+  images.forEach((image,index)=>{
+    const dot=document.createElement("button");
+    dot.className="gallery-dot";
+    dot.setAttribute("aria-label","Ver foto "+(index+1));
+    dot.onclick=()=>showSlide(index);
+    dots.appendChild(dot);
+  });
+
+  let touchStart=0;
+
+  gallery.addEventListener("touchstart",function(event){
+    touchStart=event.changedTouches[0].screenX;
+  },{passive:true});
+
+  gallery.addEventListener("touchend",function(event){
+
+    const difference=touchStart-event.changedTouches[0].screenX;
+
+    if(Math.abs(difference)>40){
+      showSlide(currentIndex+(difference>0?1:-1));
+    }
+  },{passive:true});
+
+  gallery.append(prev,next,counter,dots);
+  showSlide(0);
+
+  return gallery;
 }
 
 function renderProducts(list=products){
@@ -370,10 +662,7 @@ function renderProducts(list=products){
     const card=document.createElement("div");
     card.className="product";
 
-    const img=document.createElement("img");
-    img.src=product.image;
-    img.alt=product.name;
-    img.loading="lazy";
+    const gallery=createGallery(product);
 
     const info=document.createElement("div");
     info.className="product-info";
@@ -394,7 +683,7 @@ function renderProducts(list=products){
     link.href=product.link;
     link.target="_blank";
     link.rel="noopener noreferrer";
-    link.textContent="🛒 COMPRE AGORA";
+    link.textContent="🛒 COMPRE AQUI";
 
     const controls=document.createElement("div");
     controls.className="manage-buttons";
@@ -410,11 +699,9 @@ function renderProducts(list=products){
     remove.onclick=()=>deleteProduct(product.id);
 
     controls.append(edit,remove);
-
     info.append(name,offer,platform,link,controls);
-    card.append(img,info);
+    card.append(gallery,info);
     container.appendChild(card);
-
   });
 }
 
@@ -425,19 +712,15 @@ function addProduct(){
   const platform=document.getElementById("productPlatform").value;
   const link=document.getElementById("productLink").value.trim();
 
-  if(!name || (!selectedImage && editingId===null) ||
-     !category || !platform || !link){
-
-    alert("⚠️ Preencha todos os campos e escolha uma foto!");
+  if(!name||selectedImages.length===0||
+     !category||!platform||!link){
+    alert("⚠️ Preencha todos os campos e escolha pelo menos uma foto!");
     return;
   }
 
   try{
     const url=new URL(link);
-
-    if(!["http:","https:"].includes(url.protocol)){
-      throw new Error();
-    }
+    if(!["http:","https:"].includes(url.protocol))throw new Error();
   }catch{
     alert("⚠️ Insira um link válido.");
     return;
@@ -459,7 +742,8 @@ function addProduct(){
       category,
       platform,
       link,
-      image:selectedImage || products[index].image
+      image:selectedImages[0],
+      images:[...selectedImages]
     };
 
     alert("✅ Anúncio atualizado com sucesso!");
@@ -472,7 +756,8 @@ function addProduct(){
       category,
       platform,
       link,
-      image:selectedImage
+      image:selectedImages[0],
+      images:[...selectedImages]
     });
 
     alert("✅ Produto publicado com sucesso!");
@@ -486,7 +771,6 @@ function addProduct(){
 function editProduct(id){
 
   const product=products.find(p=>p.id===id);
-
   if(!product)return;
 
   editingId=id;
@@ -496,10 +780,11 @@ function editProduct(id){
   document.getElementById("productPlatform").value=product.platform;
   document.getElementById("productLink").value=product.link;
 
-  selectedImage="";
+  selectedImages=product.images&&product.images.length
+    ?[...product.images]
+    :(product.image?[product.image]:[]);
 
-  document.getElementById("preview").src=product.image;
-  document.getElementById("previewBox").style.display="block";
+  renderPreview();
 
   document.getElementById("formTitle").innerText="✏️ Editar Anúncio";
   document.getElementById("submitButton").innerText="💾 SALVAR ALTERAÇÕES";
@@ -513,14 +798,9 @@ function editProduct(id){
 function deleteProduct(id){
 
   const product=products.find(p=>p.id===id);
-
   if(!product)return;
 
-  const confirmDelete=confirm(
-    "Tem certeza que deseja excluir o anúncio: "+product.name+"?"
-  );
-
-  if(!confirmDelete)return;
+  if(!confirm("Tem certeza que deseja excluir o anúncio: "+product.name+"?"))return;
 
   products=products.filter(p=>p.id!==id);
 
@@ -535,7 +815,7 @@ function deleteProduct(id){
 function resetForm(){
 
   editingId=null;
-  selectedImage="";
+  selectedImages=[];
 
   document.getElementById("productName").value="";
   document.getElementById("productImage").value="";
@@ -543,7 +823,7 @@ function resetForm(){
   document.getElementById("productPlatform").value="";
   document.getElementById("productLink").value="";
 
-  document.getElementById("previewBox").style.display="none";
+  renderPreview();
 
   document.getElementById("formTitle").innerText="➕ Cadastrar Produto";
   document.getElementById("submitButton").innerText="🚀 PUBLICAR PRODUTO";
@@ -556,9 +836,7 @@ function cancelEdit(){
 
 function filterCategory(category){
 
-  const filtered=products.filter(
-    product=>product.category===category
-  );
+  const filtered=products.filter(p=>p.category===category);
 
   document.getElementById("productsTitle").innerText="📂 "+category;
   renderProducts(filtered);
@@ -574,12 +852,10 @@ function showAllProducts(){
 
 function searchProducts(){
 
-  const search=document
-    .getElementById("searchInput")
-    .value.toLowerCase();
+  const search=document.getElementById("searchInput").value.toLowerCase();
 
-  const filtered=products.filter(product=>
-    product.name.toLowerCase().includes(search)
+  const filtered=products.filter(p=>
+    p.name.toLowerCase().includes(search)
   );
 
   document.getElementById("productsTitle").innerText=
