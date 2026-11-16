@@ -1,0 +1,10 @@
+{
+  "name": "GEESPORTESRUSTICO",
+  "short_name": "GEESPORTES",
+  "description": "Ofertas e produtos selecionados para você",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#155eef",
+  "icons": []
+}
