@@ -100,13 +100,13 @@ header p{margin:6px 0 0;font-size:13px}
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:32px;
-  height:38px;
+  width:34px;
+  height:40px;
   border:none;
   border-radius:20px;
   background:rgba(0,0,0,.55);
   color:white;
-  font-size:22px;
+  font-size:23px;
   cursor:pointer;
   z-index:2;
 }
@@ -126,12 +126,12 @@ header p{margin:6px 0 0;font-size:13px}
 }
 
 .gallery-dot{
-  width:8px;
-  height:8px;
+  width:9px;
+  height:9px;
   padding:0;
   border:none;
   border-radius:50%;
-  background:rgba(255,255,255,.65);
+  background:rgba(255,255,255,.7);
   cursor:pointer;
 }
 
@@ -144,10 +144,10 @@ header p{margin:6px 0 0;font-size:13px}
   position:absolute;
   top:8px;
   right:8px;
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.65);
   color:white;
-  font-size:11px;
-  padding:5px 8px;
+  font-size:12px;
+  padding:5px 9px;
   border-radius:15px;
 }
 
@@ -248,6 +248,11 @@ header p{margin:6px 0 0;font-size:13px}
   cursor:pointer;
 }
 
+.add-button:disabled{
+  opacity:.6;
+  cursor:wait;
+}
+
 .cancel-button{
   display:none;
   width:100%;
@@ -295,9 +300,9 @@ header p{margin:6px 0 0;font-size:13px}
 
 .preview-list{
   display:flex;
-  gap:9px;
+  gap:10px;
   overflow-x:auto;
-  padding:8px 2px;
+  padding:10px 4px;
 }
 
 .preview-item{
@@ -404,7 +409,7 @@ placeholder="Nome do produto">
 accept="image/*" multiple onchange="previewImage()">
 
 <p class="photo-count">
-Você pode selecionar várias fotos de uma vez.
+Selecione várias fotos de uma vez.
 </p>
 
 <div class="preview-box" id="previewBox">
@@ -450,10 +455,13 @@ CANCELAR EDIÇÃO
 
 <div class="image-modal" id="imageModal"
 onclick="closeImageModal()">
+
 <button class="modal-close"
 onclick="closeImageModal()">×</button>
+
 <img id="modalImage" src=""
 alt="Foto ampliada do produto">
+
 </div>
 
 <footer>
@@ -463,8 +471,10 @@ alt="Foto ampliada do produto">
 <script>
 
 let products=JSON.parse(localStorage.getItem("geProdutos"))||[];
+
 let selectedImages=[];
 let editingId=null;
+let readingImages=false;
 
 products=products.map((product,index)=>({
   ...product,
@@ -475,37 +485,92 @@ products=products.map((product,index)=>({
 }));
 
 function saveProducts(){
+
   try{
+
     localStorage.setItem("geProdutos",JSON.stringify(products));
+
   }catch(error){
-    alert("Não foi possível salvar. Tente usar fotos menores.");
+
+    alert("Não foi possível salvar. As fotos podem estar grandes demais. Tente imagens menores.");
+
     throw error;
+
   }
+
 }
 
-function previewImage(){
+/* CARREGAR TODAS AS FOTOS ANTES DE SALVAR */
+
+async function previewImage(){
 
   const input=document.getElementById("productImage");
   const files=Array.from(input.files);
+
+  if(!files.length)return;
+
   input.value="";
+  readingImages=true;
 
-  files.forEach(file=>{
+  const button=document.getElementById("submitButton");
 
-    if(!file.type.startsWith("image/")){
-      alert("Escolha somente imagens válidas.");
-      return;
-    }
+  button.disabled=true;
+  button.textContent="⏳ CARREGANDO FOTOS...";
 
-    const reader=new FileReader();
+  try{
 
-    reader.onload=function(event){
-      selectedImages.push(event.target.result);
-      renderPreview();
-    };
+    const loadedImages=await Promise.all(
 
-    reader.readAsDataURL(file);
-  });
+      files.map(file=>{
+
+        if(!file.type.startsWith("image/")){
+
+          return Promise.reject(
+            new Error("Arquivo inválido: "+file.name)
+          );
+
+        }
+
+        return new Promise((resolve,reject)=>{
+
+          const reader=new FileReader();
+
+          reader.onload=()=>resolve(reader.result);
+
+          reader.onerror=()=>reject(
+            new Error("Erro ao carregar "+file.name)
+          );
+
+          reader.readAsDataURL(file);
+
+        });
+
+      })
+
+    );
+
+    selectedImages.push(...loadedImages);
+
+    renderPreview();
+
+  }catch(error){
+
+    alert("Erro ao carregar as fotos. Tente novamente.");
+
+  }finally{
+
+    readingImages=false;
+    button.disabled=false;
+
+    button.textContent=editingId!==null
+      ?"💾 SALVAR ALTERAÇÕES"
+      :"🚀 PUBLICAR PRODUTO";
+
+  }
+
 }
+
+/* PRÉVIA DAS FOTOS */
 
 function renderPreview(){
 
@@ -515,8 +580,10 @@ function renderPreview(){
   list.innerHTML="";
 
   if(selectedImages.length===0){
+
     box.style.display="none";
     return;
+
   }
 
   box.style.display="block";
@@ -530,37 +597,60 @@ function renderPreview(){
     img.src=image;
 
     const remove=document.createElement("button");
+
     remove.className="remove-photo";
     remove.textContent="×";
+    remove.title="Remover foto";
+
     remove.onclick=()=>removeSelectedImage(index);
 
     item.append(img,remove);
+
     list.appendChild(item);
+
   });
 
   const count=document.createElement("p");
+
   count.className="photo-count";
-  count.textContent=selectedImages.length+" foto(s) selecionada(s)";
+  count.textContent=selectedImages.length+" foto(s) carregada(s)";
+
   list.appendChild(count);
+
 }
 
 function removeSelectedImage(index){
+
   selectedImages.splice(index,1);
   renderPreview();
+
 }
 
+/* FOTO AMPLIADA */
+
 function openImageModal(image){
+
   document.getElementById("modalImage").src=image;
+
   document.getElementById("imageModal").style.display="flex";
+
 }
 
 function closeImageModal(){
+
   document.getElementById("imageModal").style.display="none";
+
 }
 
 document.addEventListener("keydown",function(event){
-  if(event.key==="Escape")closeImageModal();
+
+  if(event.key==="Escape"){
+    closeImageModal();
+  }
+
 });
+
+/* GALERIA */
 
 function createGallery(product){
 
@@ -569,6 +659,7 @@ function createGallery(product){
     :(product.image?[product.image]:[]);
 
   const gallery=document.createElement("div");
+
   gallery.className="gallery";
 
   if(!images.length)return gallery;
@@ -576,14 +667,16 @@ function createGallery(product){
   let currentIndex=0;
 
   const img=document.createElement("img");
+
   img.src=images[0];
   img.alt=product.name;
   img.loading="lazy";
+
   img.onclick=()=>openImageModal(images[currentIndex]);
 
   gallery.appendChild(img);
 
-  if(images.length<=1)return gallery;
+  if(images.length===1)return gallery;
 
   const counter=document.createElement("div");
   counter.className="gallery-counter";
@@ -594,67 +687,96 @@ function createGallery(product){
   function showSlide(index){
 
     currentIndex=(index+images.length)%images.length;
+
     img.src=images[currentIndex];
-    counter.textContent=(currentIndex+1)+" / "+images.length;
+
+    counter.textContent=
+      (currentIndex+1)+" / "+images.length;
 
     Array.from(dots.children).forEach((dot,i)=>{
+
       dot.classList.toggle("active",i===currentIndex);
+
     });
+
   }
 
   const prev=document.createElement("button");
+
   prev.className="gallery-arrow gallery-prev";
   prev.textContent="‹";
   prev.setAttribute("aria-label","Foto anterior");
+
   prev.onclick=()=>showSlide(currentIndex-1);
 
   const next=document.createElement("button");
+
   next.className="gallery-arrow gallery-next";
   next.textContent="›";
   next.setAttribute("aria-label","Próxima foto");
+
   next.onclick=()=>showSlide(currentIndex+1);
 
   images.forEach((image,index)=>{
+
     const dot=document.createElement("button");
+
     dot.className="gallery-dot";
     dot.setAttribute("aria-label","Ver foto "+(index+1));
+
     dot.onclick=()=>showSlide(index);
+
     dots.appendChild(dot);
+
   });
 
   let touchStart=0;
 
   gallery.addEventListener("touchstart",function(event){
+
     touchStart=event.changedTouches[0].screenX;
+
   },{passive:true});
 
   gallery.addEventListener("touchend",function(event){
 
-    const difference=touchStart-event.changedTouches[0].screenX;
+    const difference=
+      touchStart-event.changedTouches[0].screenX;
 
     if(Math.abs(difference)>40){
+
       showSlide(currentIndex+(difference>0?1:-1));
+
     }
+
   },{passive:true});
 
   gallery.append(prev,next,counter,dots);
+
   showSlide(0);
 
   return gallery;
+
 }
+
+/* MOSTRAR PRODUTOS */
 
 function renderProducts(list=products){
 
   const container=document.getElementById("products");
+
   container.innerHTML="";
 
   if(list.length===0){
+
     container.innerHTML=`
       <div class="empty">
         Nenhum produto encontrado.<br>
         Cadastre seu primeiro produto! 🛒
       </div>`;
+
     return;
+
   }
 
   list.forEach(product=>{
@@ -679,105 +801,174 @@ function renderProducts(list=products){
     platform.textContent="🛍️ "+product.platform;
 
     const link=document.createElement("a");
+
     link.className="buy-button";
     link.href=product.link;
     link.target="_blank";
     link.rel="noopener noreferrer";
+
     link.textContent="🛒 COMPRE AQUI";
 
     const controls=document.createElement("div");
     controls.className="manage-buttons";
 
     const edit=document.createElement("button");
+
     edit.className="edit-button";
     edit.textContent="✏️ EDITAR";
     edit.onclick=()=>editProduct(product.id);
 
     const remove=document.createElement("button");
+
     remove.className="delete-button";
     remove.textContent="🗑️ EXCLUIR";
     remove.onclick=()=>deleteProduct(product.id);
 
     controls.append(edit,remove);
+
     info.append(name,offer,platform,link,controls);
+
     card.append(gallery,info);
+
     container.appendChild(card);
+
   });
+
 }
 
-function addProduct(){
+/* CADASTRAR E EDITAR */
+
+async function addProduct(){
+
+  if(readingImages){
+
+    alert("Aguarde o carregamento de todas as fotos!");
+
+    return;
+
+  }
 
   const name=document.getElementById("productName").value.trim();
+
   const category=document.getElementById("productCategory").value;
+
   const platform=document.getElementById("productPlatform").value;
+
   const link=document.getElementById("productLink").value.trim();
 
   if(!name||selectedImages.length===0||
      !category||!platform||!link){
+
     alert("⚠️ Preencha todos os campos e escolha pelo menos uma foto!");
+
     return;
+
   }
 
   try{
+
     const url=new URL(link);
-    if(!["http:","https:"].includes(url.protocol))throw new Error();
+
+    if(!["http:","https:"].includes(url.protocol)){
+      throw new Error();
+    }
+
   }catch{
+
     alert("⚠️ Insira um link válido.");
+
     return;
+
   }
+
+  const oldProducts=JSON.stringify(products);
 
   if(editingId!==null){
 
     const index=products.findIndex(p=>p.id===editingId);
 
     if(index===-1){
+
       alert("Produto não encontrado.");
+
       cancelEdit();
+
       return;
+
     }
 
     products[index]={
+
       ...products[index],
+
       name,
       category,
       platform,
       link,
-      image:selectedImages[0],
-      images:[...selectedImages]
-    };
 
-    alert("✅ Anúncio atualizado com sucesso!");
+      image:selectedImages[0],
+
+      images:[...selectedImages]
+
+    };
 
   }else{
 
     products.push({
+
       id:Date.now(),
+
       name,
       category,
       platform,
       link,
+
       image:selectedImages[0],
+
       images:[...selectedImages]
+
     });
 
-    alert("✅ Produto publicado com sucesso!");
   }
 
-  saveProducts();
+  try{
+
+    saveProducts();
+
+  }catch(error){
+
+    products=JSON.parse(oldProducts);
+
+    return;
+
+  }
+
   renderProducts();
+
   resetForm();
+
+  alert(editingId===null
+    ?"✅ Produto publicado com sucesso!"
+    :"✅ Anúncio atualizado com sucesso!");
+
 }
+
+/* EDITAR PRODUTO */
 
 function editProduct(id){
 
   const product=products.find(p=>p.id===id);
+
   if(!product)return;
 
   editingId=id;
 
   document.getElementById("productName").value=product.name;
+
   document.getElementById("productCategory").value=product.category;
+
   document.getElementById("productPlatform").value=product.platform;
+
   document.getElementById("productLink").value=product.link;
 
   selectedImages=product.images&&product.images.length
@@ -787,30 +978,56 @@ function editProduct(id){
   renderPreview();
 
   document.getElementById("formTitle").innerText="✏️ Editar Anúncio";
+
   document.getElementById("submitButton").innerText="💾 SALVAR ALTERAÇÕES";
+
   document.getElementById("cancelButton").style.display="block";
 
   document.getElementById("adminPanel").scrollIntoView({
     behavior:"smooth"
   });
+
 }
+
+/* EXCLUIR */
 
 function deleteProduct(id){
 
   const product=products.find(p=>p.id===id);
+
   if(!product)return;
 
-  if(!confirm("Tem certeza que deseja excluir o anúncio: "+product.name+"?"))return;
+  const confirmDelete=confirm(
+    "Tem certeza que deseja excluir o anúncio: "+product.name+"?"
+  );
+
+  if(!confirmDelete)return;
+
+  const oldProducts=products;
 
   products=products.filter(p=>p.id!==id);
 
-  saveProducts();
+  try{
+
+    saveProducts();
+
+  }catch(error){
+
+    products=oldProducts;
+
+    return;
+
+  }
+
   renderProducts();
 
   if(editingId===id)resetForm();
 
   alert("🗑️ Anúncio excluído!");
+
 }
+
+/* LIMPAR FORMULÁRIO */
 
 function resetForm(){
 
@@ -826,33 +1043,60 @@ function resetForm(){
   renderPreview();
 
   document.getElementById("formTitle").innerText="➕ Cadastrar Produto";
+
   document.getElementById("submitButton").innerText="🚀 PUBLICAR PRODUTO";
+
   document.getElementById("cancelButton").style.display="none";
+
+  document.getElementById("submitButton").disabled=false;
+
 }
 
 function cancelEdit(){
+
+  if(readingImages){
+
+    alert("Aguarde o carregamento das fotos.");
+
+    return;
+
+  }
+
   resetForm();
+
 }
+
+/* CATEGORIAS */
 
 function filterCategory(category){
 
-  const filtered=products.filter(p=>p.category===category);
+  const filtered=products.filter(
+    p=>p.category===category
+  );
 
   document.getElementById("productsTitle").innerText="📂 "+category;
+
   renderProducts(filtered);
+
 }
 
 function showAllProducts(){
 
   document.getElementById("searchInput").value="";
+
   document.getElementById("productsTitle").innerText="🔥 Produtos e Ofertas";
 
   renderProducts();
+
 }
+
+/* PESQUISA */
 
 function searchProducts(){
 
-  const search=document.getElementById("searchInput").value.toLowerCase();
+  const search=document
+    .getElementById("searchInput")
+    .value.toLowerCase();
 
   const filtered=products.filter(p=>
     p.name.toLowerCase().includes(search)
@@ -862,7 +1106,10 @@ function searchProducts(){
     search?"🔎 Resultado da pesquisa":"🔥 Produtos e Ofertas";
 
   renderProducts(filtered);
+
 }
+
+/* INICIAR */
 
 saveProducts();
 renderProducts();
@@ -871,15 +1118,23 @@ renderProducts();
 
 <script>
 if("serviceWorker" in navigator){
+
   window.addEventListener("load",function(){
+
     navigator.serviceWorker.register("./service-worker.js")
     .then(function(registration){
+
       console.log("Service Worker registrado:",registration.scope);
+
     })
     .catch(function(error){
+
       console.log("Erro ao registrar Service Worker:",error);
+
     });
+
   });
+
 }
 </script>
 
